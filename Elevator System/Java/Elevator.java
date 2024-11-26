@@ -1,20 +1,29 @@
 import java.util.PriorityQueue;
 
 public class Elevator {
+    int id;
     int currentFloor;
     Direction direction;
     PriorityQueue<Request> upQueue;
     PriorityQueue<Request> downQueue;
 
-    public Elevator(int currentFloor) {
+    public Elevator(int id, int currentFloor) {
+        this.id = id;
         this.currentFloor = currentFloor;
-        direction = Direction.IDLE;
+        setDirection(Direction.IDLE);
 
         // use default, which is a min heap
         upQueue = new PriorityQueue<>((a, b) -> a.desiredFloor - b.desiredFloor);
 
         // use a max heap
         downQueue = new PriorityQueue<>((a, b) -> b.desiredFloor - a.desiredFloor);
+    }
+
+    public void addRequest(Request request) {
+        if(request.direction == Direction.UP)
+            upQueue.offer(request);
+        else
+            downQueue.offer(request);
     }
 
     public void sendUpRequest(Request upRequest) {
@@ -27,12 +36,12 @@ public class Elevator {
                     new Request(upRequest.currentFloor, upRequest.currentFloor,
                             Direction.UP, Location.OUTSIDE_ELEVATOR)
             );
-            System.out.println("Append up request going to floor " + upRequest.currentFloor + ".");
+            System.out.println("Elevator: " + this.id + " Append up request going to floor " + upRequest.currentFloor + ".");
         }
 
         // Go to the desired floor
         upQueue.offer(upRequest);
-        System.out.println("Append up request going to floor " + upRequest.desiredFloor + ".");
+        System.out.println("Elevator: " + this.id + " Append up request going to floor " + upRequest.desiredFloor + ".");
     }
 
     public void sendDownRequest(Request downRequest) {
@@ -41,12 +50,12 @@ public class Elevator {
             downQueue.offer(new Request(downRequest.currentFloor, downRequest.currentFloor,
                     Direction.DOWN, Location.OUTSIDE_ELEVATOR));
 
-            System.out.println("Append down request going to floor " + downRequest.currentFloor + ".");
+            System.out.println("Elevator: " + this.id + " Append down request going to floor " + downRequest.currentFloor + ".");
         }
 
         // Go to the desired floor
         downQueue.offer(downRequest);
-        System.out.println("Append down request going to floor " + downRequest.desiredFloor + ".");
+        System.out.println("Elevator: " + this.id + " Append down request going to floor " + downRequest.desiredFloor + ".");
     }
 
     public void run() {
@@ -56,8 +65,8 @@ public class Elevator {
             processRequests();
         }
 
-        System.out.println("Finished all the requests");
-        this.direction = Direction.IDLE;
+        System.out.println("Elevator: " + this.id + " Finished all the requests");
+        setDirection(Direction.IDLE);
     }
 
     public void processRequests() {
@@ -72,17 +81,21 @@ public class Elevator {
         }
     }
 
+    public int getRequestQueueSize() {
+        return this.upQueue.size() + this.downQueue.size();
+    }
+
     public void processUpRequests() {
         while(!upQueue.isEmpty()) {
             Request request = upQueue.poll();
             // Communicate with hardware
             this.currentFloor = request.desiredFloor;
-            System.out.println("Processing up requests. Elevator stopped at floor " + this.currentFloor + ".");
+            System.out.println("Elevator: " + this.id + " Processing up requests. Elevator stopped at floor " + this.currentFloor + ".");
         }
         if(!downQueue.isEmpty()) {
-            this.direction = Direction.DOWN;
+            setDirection(Direction.DOWN);
         }
-        else this.direction = Direction.IDLE;
+        else setDirection(Direction.IDLE);
     }
 
     public void processDownRequests() {
@@ -90,13 +103,17 @@ public class Elevator {
             Request request = downQueue.poll();
             // Communicate with hardware
             this.currentFloor = request.desiredFloor;
-            System.out.println("Processing down requests. Elevator stopped at floor " + this.currentFloor + ".");
+            System.out.println("Elevator: " + this.id + " Processing down requests. Elevator stopped at floor " + this.currentFloor + ".");
         }
         if(!upQueue.isEmpty()) {
-            this.direction = Direction.UP;
+            setDirection(Direction.UP);
         }
         else {
-            this.direction = Direction.IDLE;
+            setDirection(Direction.IDLE);
         }
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 }
