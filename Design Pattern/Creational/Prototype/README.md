@@ -1,6 +1,6 @@
 ### Example of Shallow Copy and Deep Copy
 
-java```
+```
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class Course {
 ```
 
 
-java ```
+```
 public class Student implements Cloneable {
     private int studentId;
     private String studentName;
@@ -92,7 +92,7 @@ public class Student implements Cloneable {
 ```
 
 
-java```
+```
 public class CloningDemo {
     public static void main(String[] args) throws CloneNotSupportedException {
         
