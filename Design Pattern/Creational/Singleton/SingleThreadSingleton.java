@@ -8,6 +8,7 @@ public class SingleThreadSingleton {
         this.value = value;
     }
 
+    // Make this block synchronized for mutual exclusion
     public static SingleThreadSingleton getInstance(String value) {
         if(instance == null) {
             System.out.println("Creating an instance of Singleton class");
