@@ -1,4 +1,8 @@
+// Thread-safe Singleton with lazy loading
+// To fix the problem, you have to synchronize threads during first creation of the Singleton object.
+
 public class MultiThreadedSingleton {
+    // The field must be declared volatile so that double check lock would work correctly.
     public static volatile MultiThreadedSingleton instance;
     public String value;
     private MultiThreadedSingleton(String value) {
