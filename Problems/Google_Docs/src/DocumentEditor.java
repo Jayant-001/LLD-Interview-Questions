@@ -1,51 +1,47 @@
 package Problems.Google_Docs.src;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.List;
+import Problems.Google_Docs.src.elements.ImageElement;
+import Problems.Google_Docs.src.elements.NewLineElement;
+import Problems.Google_Docs.src.elements.TabSpaceElement;
+import Problems.Google_Docs.src.elements.TextElement;
+import Problems.Google_Docs.src.persistance.Persistance;
 
 public class DocumentEditor {
-    // Document elements like text, images
-    List<String> elements;
-    // Rendered document
-    String renderedDocument;
 
-    public DocumentEditor() {
-        this.elements = new ArrayList<>();
+    Document document;
+    Persistance persistance;
+
+    public DocumentEditor(Document document, Persistance persistance) {
+        this.document = document;
+        this.persistance = persistance;
     }
 
     public void addImage(String imagePath) {
-        elements.add("Image: " + imagePath);
+        document.addElement(new ImageElement(imagePath));
     }
 
     public void addText(String text) {
-        elements.add("Text: " + text);
+        document.addElement(new TextElement(text));
     }
 
-    public String renderDocument() {
-        if(renderedDocument == null) {
-            String s = "-----------------------------\n";
-            s += String.join("\n", elements);
-            s += "\n-----------------------------";
-            renderedDocument = s;
-        }
-        return renderedDocument;
+    public void addNewLine() {
+        document.addElement(new NewLineElement());
+    }
+    
+    public void addTabSpace() {
+        document.addElement(new TabSpaceElement());
     }
 
-    public void printDocument() {
-        try {
-            String filePath = "problems/Google_Docs/document.txt";
-            File file = new File(filePath);
-            file.createNewFile();
+    public String render() {
+        return document.render();
+    }
 
-            FileWriter writer = new FileWriter(filePath);
-            writer.write(renderDocument());
-            writer.close();
-            System.out.println("Document printed to document.txt");
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
+    public void save() {
+        persistance.save(render());
+    }
+
+    public void print() {
+        System.out.println(render());
     }
     
 }
